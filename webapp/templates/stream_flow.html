@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+
+    <title> JMAP-Twitter-Flowboard</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+
+    <link href="{{ url_for('static', filename='dist/metricsgraphics.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-theme.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/metricsgraphics-demo.css')}}" rel="stylesheet" id='light'>
+    <link href="{{ url_for('static', filename='css/highlightjs-default.css')}}" rel="stylesheet">
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/metricsgraphics.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/crossfilter.min.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/highlight.pack.js')}}"></script>
+
+</head>
+<style>
+#trunk{
+  margin-top:10px;
+}
+#main-panel1{
+    height: 600px;
+    overflow:scroll;
+}
+#main-panel2{
+    height: 600px;
+    overflow:scroll;   
+}
+#main-panel3{
+    height: 600px;
+    overflow:scroll;   
+}
+.trunk{
+    margin-bottom:10px;
+}
+.atweet{
+  margin-top:2px;
+  margin-bottom: 0;
+  margin-left:3px;
+  margin-right:3px;
+  width:340px;
+}
+.media-body{
+  position:relative;
+  padding-bottom: 0;
+  border-bottom: 0;
+}
+p.user-header{
+  font-family:Arial;
+  font-size:11px;
+  line-height:15px;
+  margin-bottom:3px;
+}
+p.text-body{
+  font-family:Arial;
+  font-size:11px;
+  top:15px;
+  line-height:12px;
+}
+p.endline{
+  font-family:Arial;
+  font-size:8px;
+  line-height:10px;
+  position:absolute;
+  bottom:0;
+  padding-bottom: 0;
+  border-bottom:0;
+  margin-bottom: 0;
+}
+.block1 {
+   background-color: rgba(64,64,232,0.3);
+}
+
+.block2 {
+   background-color: rgba(5, 179, 120, 0.3);
+}
+
+.block3{
+   background-color: rgba(219, 68, 55, 0.3);
+}
+
+.block4{
+   background-color: rgba(248,177,40,0.3);
+}
+
+.block5{
+    background-color: rgba(92,92,92,0.3);
+}
+
+.block6{
+   background-color: rgba(255,116,0,0.3);
+}
+
+.block7{
+   background-color: rgba(0,168,162,0.3);
+}
+
+td{
+  font-size:10px;
+}
+</style>
+<body>
+    <div class='container'>
+        <div class='head'>
+        </div>
+        <div class='trunk'>
+             <div class='col-md-1'>
+              <button type="button" class="btn btn-default" id = "play-btn" aria-label="Left Align">
+                <span class="glyphicon glyphicon-pause" id = "play-img" aria-hidden="true"></span>
+              </button>
+             </div>
+	           <div class='col-md-7' id='user-desc'>
+	           </div>
+	           <div class="input-group">
+  	             <input type="text" class="form-control" placeholder="Enter new search rule">
+  	             <span class="input-group-btn"><button class="btn btn-default" type="button">Add Rule</button></span>
+	           </div>
+        </div>
+        <div id='trunk'>
+            <div class='trunk-section'>
+                <div class='container-fluid col-md-4' id='main-panel1'>            
+                </div>
+                <div class='container-fluid col-md-4' id='main-panel2'>            
+                </div>
+                <div class='container-fluid col-md-4' id='main-panel3'>  
+                  <table font-size="10px" cellspacing="5">
+                    <tr><td class='block1' width="20px">   </td><td> CNN</td></tr>
+                    <tr><td class='block2' width="20px">   </td><td> New York Times</td></tr>
+                    <tr><td class='block3' width="20px">   </td><td> The Huffington Post</td></tr>
+                    <tr><td class='block4' width="20px">   </td><td> Fox News</td></tr>
+                    <tr><td class='block5' width="20px">   </td><td> Wall Street Journal</td></tr>
+                    <tr><td class='block6' width="20px">   </td><td> Buzzfeed</td></tr>
+                    <tr><td class='block7' width="20px">   </td><td> NPR</td></tr>
+                  </table>          
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type='text/javascript' src="{{ url_for('static', filename='js/stream_flow.js')}}"></script>
+    <script>window.twttr = (function(d, s, id) {
+      var js, fjs = d.getElementsByTagName(s)[0],
+        t = window.twttr || {};
+      if (d.getElementById(id)) return;
+      js = d.createElement(s);
+      js.id = id;
+      js.src = "https://platform.twitter.com/widgets.js";
+      fjs.parentNode.insertBefore(js, fjs);
+     
+      t._e = [];
+      t.ready = function(f) {
+        t._e.push(f);
+      };
+     
+      return t;
+    }(document, "script", "twitter-wjs"));</script>
+    <script>var stream_url = "{{url_for('get_stream_data')}}";</script>
+</body>
+</html>
