@@ -1,5 +1,7 @@
 <!DOCTYPE html>
+
 <html lang='en'>
+
 <head>
     <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
 
@@ -14,22 +16,76 @@
     <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
     <link href="{{ url_for('static', filename='css/metricsgraphics-demo.css')}}" rel="stylesheet" id='light'>
     <link href="{{ url_for('static', filename='css/highlightjs-default.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-tagsinput.css')}}" rel="stylesheet">
 
     <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
     <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+    <script src="http://d3js.org/queue.v1.min.js"></script>
 
     <script type='text/javascript' src="{{ url_for('static', filename='dist/metricsgraphics.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/scrolllock.js')}}"></script>
     <script type='text/javascript' src="{{ url_for('static', filename='js/lib/crossfilter.min.js')}}"></script>
     <script type='text/javascript' src="{{ url_for('static', filename='js/lib/highlight.pack.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/bootstrap-tagsinput.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/bootstrap-tagsinput-angular.js')}}"></script>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/lib/Chart.js')}}"></script>
 
 </head>
 <style>
+
+body {
+      background-image: linear-gradient(to right, rgba(94, 169, 221, 0.2), rgba(94, 169, 221, 0.2) 90%, #FEFEFE 10%, #FEFEFE);
+      background-position: 1059px 0px;
+      background-repeat: no-repeat;
+      overflow:hidden;
+  }
+
+html, body {
+        margin: 0;
+        height: 100%;
+}
+
+#fork {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+}
+
+.legend {
+    width: 10em;
+    margin-top:1px;
+    padding-top: 10px;
+    padding-bottom: 1px;
+}
+
+.legend .title {
+    display: block;
+    margin-bottom: 1px;
+    line-height: 1.2em;
+    padding: 0 0.3em;
+}
+
+.legend .color-sample {
+    display: block;
+    float: left;
+    width: 1em;
+    height: 1em;
+    border: 2px solid; /* Comment out if you don't want to show the fillColor */
+    border-radius: 0.5em; /* Comment out if you prefer squarish samples */
+    margin-right: 0.5em;
+}
+
 #trunk{
   margin-top:10px;
 }
 #main-panel1{
-    height: 600px;
-    overflow:scroll;
+    height: 2720px;
+    overflow:auto;
+    margin-top:0px;
+    margin-bottom: 0px;
+    position: relative;
+    width:1012px;
 }
 #main-panel2{
     height: 600px;
@@ -42,12 +98,23 @@
 .trunk{
     margin-bottom:10px;
 }
-.atweet{
-  margin-top:2px;
+span.atweet{
+  margin-top:0 !important;
   margin-bottom: 0;
-  margin-left:3px;
+  margin-left:10px;
   margin-right:3px;
-  width:340px;
+  width:100%;
+  height:0 !important;
+  position:relative;
+}
+.media{
+  padding-top: 0px !important;
+  margin-top:0px;
+}
+.media-left{
+  padding-top: 10px;
+  padding-bottom: 10px;
+  width:10% !important;
 }
 .media-body{
   position:relative;
@@ -59,6 +126,7 @@ p.user-header{
   font-size:11px;
   line-height:15px;
   margin-bottom:3px;
+  width:440px;
 }
 p.text-body{
   font-family:Arial;
@@ -76,93 +144,467 @@ p.endline{
   border-bottom:0;
   margin-bottom: 0;
 }
-.block1 {
-   background-color: rgba(64,64,232,0.3);
+
+table{
+ font-size: 0.8rem;
+ margin-top: 10px;
+ padding-top: 0px;
+ table-layout: fixed;
 }
 
-.block2 {
-   background-color: rgba(5, 179, 120, 0.3);
-}
-
-.block3{
-   background-color: rgba(219, 68, 55, 0.3);
-}
-
-.block4{
-   background-color: rgba(248,177,40,0.3);
-}
-
-.block5{
-    background-color: rgba(92,92,92,0.3);
-}
-
-.block6{
-   background-color: rgba(255,116,0,0.3);
-}
-
-.block7{
-   background-color: rgba(0,168,162,0.3);
+th{
+  font-size:16px;
 }
 
 td{
-  font-size:10px;
+  font-size:16px;
 }
+
+td.col_0{
+  width:70%;
+}
+td.col_1{
+  padding-left: 20px;
+  align:right;
+}
+
+div.usermedia{
+  width:500px;
+}
+
+.row{
+  margin-bottom: 40px;
+}
+
+#rule{
+  position:absolute;
+  padding-left: 20px;
+  margin-left: 28px;
+  width:90%;
+}
+
+#tag-field{
+  margin-top: 50px;
+}
+
+.bootstrap-tagsinput {
+  display: block;
+  width: 100% ;
+  height:70px;
+}
+
+canvas{
+  margin-top: 20px;
+}
+
+.cellup{
+  color:#83BC83;
+  font-weight:bold;
+}
+
+.celldown{
+  color:red;
+  font-weight:bold;
+}
+
+#over span {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.npr{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #4167B0;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.cnn{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #CC1417;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.nyt{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #000000;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.buzzfeed{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #EB1C58;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.fox{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #183A53;
+  border-bottom: 1px solid #dcdcdc;
+}
+
+.wsj{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #000F26;
+  border-bottom: 1px solid #dcdcdc;  
+}
+
+.default{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #000F26;
+  border-bottom: 1px solid #dcdcdc;  
+}
+
+.null{
+  margin-top:0px;
+  margin-bottom: 0px;
+  margin-left:1px;
+  padding: 5px 5px 5px 5px;
+  border-left: 6px solid #000F26;
+  border-bottom: 1px solid #dcdcdc;  
+}
+
+.overlay {
+    position: fixed;
+    margin-bottom: 0;
+    margin-left: 0;
+    width: inherit;
+    z-index: 100000;
+    opacity: 0;
+    background: #000000;
+    height: 6%;
+}
+
+#header{
+  margin-bottom:5px;
+}
+
+#header-name{
+  font-size: 36px;
+  font-family: Arial;
+  font-weight: bold;
+  padding-right:0px;
+  margin-right: 0px;
+}
+
+#logo{
+  position:fixed;
+  width:60px;
+  height:50px;
+  margin-right: 0px;
+  margin-top: 5px;
+  margin-bottom: 0px;
+}
+
+#lsm{
+  position:fixed;
+  width:80px;
+  height:80px;
+  left:1530px;
+  top: 5px;
+}
+img.table_tweet{
+  margin-left:5px;
+}
+
+.glyphicon-refresh-animate {
+    -animation: spin .7s infinite linear;
+    -webkit-animation: spin2 .7s infinite linear;
+}
+
+@-webkit-keyframes spin2 {
+    from { -webkit-transform: rotate(0deg);}
+    to { -webkit-transform: rotate(360deg);}
+}
+
+@keyframes spin {
+    from { transform: scale(1) rotate(0deg);}
+    to { transform: scale(1) rotate(360deg);}
+}
+div#wait-tweet{
+  position:absolute; 
+  width:80%; 
+  padding-left:50%;
+}
+tr{
+  margin-bottom: 9px;
+  margin-top: 9px
+}
+td{
+  height:50px;
+}
+div.retweet{
+  display:inline-block;
+  padding-left: 45px;
+  padding-top:12px;
+  padding-bottom:3px;
+  margin-bottom: 8px !important;
+  width:500px;
+  height:30px;
+  font-family:sans-serif;
+  font-color:#c4ccd2;
+  font-size:16;
+}
+
+div.horizontal {
+    display:inline-block;
+    width: 100%;
+    height: 480px;
+    overflow: auto;
+    overflow-y:hidden;
+}
+div.horizontal .trow {
+    display: table;
+    table-layout: fixed;
+    width: 100%;
+}
+div.horizontal .ranking{
+  display:inline-block;
+  position:fixed;
+  vertical-align: top;
+  padding-top: 0;
+  height:600px;
+  width:518px;
+  overflow:auto;
+}
+
+div.mention{
+  display:inline-block;
+  position:fixed;
+  vertical-align: top;
+  margin-top:50px;
+  padding-top: 0;
+  top:580px;
+  height:650px;
+  width:518px;
+  overflow:auto;
+}
+
+div.rtuser{
+  display:inline-block;
+  position:fixed;
+  vertical-align: top;
+  padding-top: 0;
+  top:1280px;
+  height:650px;
+  width:518px;
+  overflow:auto;
+}
+
+div.hashtag{
+  display:inline-block;
+  position:fixed;
+  vertical-align: top;
+  padding-top: 0;
+  top:1980px;
+  height:650px;
+  width:518px;
+  overflow:auto;  
+}
+
+span.switchPage1{
+  position:absolute;
+  left:1650px;
+  top:400px;
+}
+span.switchPage2{
+  position:absolute;
+  left:100px;
+  top:400px;
+}
+
+.onoffswitch {
+    position: relative; width: 90px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "MINUTE";
+    padding-left: 10px;
+    background-color: #28B6D6; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "HOUR";
+    padding-right: 10px;
+    background-color: #A6E6AD; color: #1F9128;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 6px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 20px;
+    position: absolute; top: 0; bottom: 0; right: 56px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s; 
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px; 
+}
+
+iframe[id^='twitter-widget-']{ width:98% !important; display:inline-block !important; margin-top: 0px !important;}
 </style>
 <body>
-    <div class='container'>
-        <div class='head'>
-        </div>
-        <div class='trunk'>
-             <div class='col-md-1'>
-              <button type="button" class="btn btn-default" id = "play-btn" aria-label="Left Align">
-                <span class="glyphicon glyphicon-pause" id = "play-img" aria-hidden="true"></span>
-              </button>
+        <!--<div class='trunk'>
+             <div class='col-lg-1'>
              </div>
-	           <div class='col-md-7' id='user-desc'>
+	           <div class='col-lg-7' id='user-desc'>
 	           </div>
-	           <div class="input-group">
-  	             <input type="text" class="form-control" placeholder="Enter new search rule">
-  	             <span class="input-group-btn"><button class="btn btn-default" type="button">Add Rule</button></span>
-	           </div>
-        </div>
-        <div id='trunk'>
-            <div class='trunk-section'>
-                <div class='container-fluid col-md-4' id='main-panel1'>            
-                </div>
-                <div class='container-fluid col-md-4' id='main-panel2'>            
-                </div>
-                <div class='container-fluid col-md-4' id='main-panel3'>  
-                  <table font-size="10px" cellspacing="5">
-                    <tr><td class='block1' width="20px">   </td><td> CNN</td></tr>
-                    <tr><td class='block2' width="20px">   </td><td> New York Times</td></tr>
-                    <tr><td class='block3' width="20px">   </td><td> The Huffington Post</td></tr>
-                    <tr><td class='block4' width="20px">   </td><td> Fox News</td></tr>
-                    <tr><td class='block5' width="20px">   </td><td> Wall Street Journal</td></tr>
-                    <tr><td class='block6' width="20px">   </td><td> Buzzfeed</td></tr>
-                    <tr><td class='block7' width="20px">   </td><td> NPR</td></tr>
-                  </table>          
-                </div>
+        </div>!-->
+        <div id='trunk'> <!--class='trunk-section'> !-->
+            <!--placeholder for page turining button!-->
+            <!--<span class="switchPage1"><a href="{{url_for('timeline')}}"><i id="turnpage-img-i" class="fa fa-caret-right fa-5x" style="float:left;padding-left:100px;padding-top:15px;"></i></a></span>!-->
+            <div class='container-fluid col-lg-8'>  
+                  <!--<button type="button" class="btn btn-default" aria-label="Center Align" id="scrollUp" style="position:absolute; width:80%; height:6%; left:10%;">
+                    <span class="glyphicon glyphicon-chevron-up" aria-hidden="true">
+                    </span>
+                  </button>!-->
+                  <div class="row" style="margin-bottom:0px;">
+                    <img class='img-rounded' src='static/images/twitter.png' id='logo' width='60px' alt='Media Object' style="align:left;margin-left:20px;" >
+                    <span id="play-btn"><i id="play-img-i" class="fa fa-pause fa-3x" style="float:left;padding-left:100px;padding-top:15px;"></i></span>
+                    <span id="scrollUp"><i id="scrollUp-i" class="fa fa-angle-up fa-5x" style="padding-left:430px;"></i></span>
+                  </div>
+                  <div class="panel panel-success"  id='main-panel1'>
+                    <div id="overlay-tweet" class="overlay">
+                      <h4 align="center"><font color="white"> New Tweets </font></h4>
+                    </div>
+                  </div>
+                  <div class="row" style="margin-bottom:0px;"><span id="scrollDown" ><i id="scrollDown-i" class="fa fa-angle-down fa-5x" style="padding-left:50%;"></i></span></div>
+                  <!--<button type="button" class="btn btn-default" aria-label="Left Align" id="scrollDown" style="position:absolute; width:80%; height:6%; left:10%;">
+                    <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span>
+                  </button>   !-->     
+            </div>
+            <div class='container-fluid col-lg-4' style='padding-left:5px;'>  
+              <div class='container-fluid col-lg-12'>  
+                <div class='row'>
+                    <div class='col-md-10' id="header-name" align="left">  JMAP        Twitter Stream</div>
+                    <div class='col-md-2'> <img class='img-rounded' src='static/images/lsm.png' id='lsm' width='80px' height='80px' alt='Media Object' style="align:right" > </div>
+                    <!--<div class='col-md-5' id="header-name" align="right">Twitter Stream
+                    </div>!-->
+                </div>  
+                  <div class = 'row'>
+                    <div class="input-group pull-right" id="rule" style="width:90%;">
+                      <datalist id="def-rule">
+                        <option value="group:WSJ">
+                        <option value="group:CNN">
+                        <option value="group:NYT">
+                        <option value="group:Buzzfeed">
+                        <option value="group:Fox">
+                        <option value="group:NPR">
+                      </datalist>
+                      <input type="text" class="form-control" placeholder="Enter new filter rule" list="def-rule" id="rule-txt" >
+                      <span class="input-group-btn"><button class="btn btn-default" type="button" id="rule-btn">Add Rule</button>
+                       <button type="button" class="btn btn-default" id = "play-refresh" aria-label="Right Align">
+                        <span class="glyphicon glyphicon-refresh" id = "play-img" aria-hidden="true"></span>
+                      </button></span>
+                    </div>
+                  </div>
+                    <select multiple data-role="tagsinput" id='tag-field'>
+                    </select>
+                    <div style="width:100%; height:30px;" id='placeholder'></div>
+                    <canvas id="myChart" width="520px" height="270px"></canvas>
+                    <div>
+                      <!--<span id="slide-left"><i id="slide-left-i" class="fa fa-chevron-left fa-2x" style="float:left;"></i></span>
+                      <span id="slide-right"> <i id="slide-right-i" class="fa fa-chevron-right fa-2x" style="float:right;"></i></span>!-->
+                      <!--<button type="button" class="btn btn-default" style="float:left; margin-left:30px;" aria-label="Left Align">
+                        <span class="glyphicon glyphicon-arrow-left" id = "slide-left" aria-hidden="true"></span>    
+                      </button>
+                      <button type="button" class="btn btn-default" style="float:right; margin-right:30px;" aria-label="Right Align" >
+                        <span class="glyphicon glyphicon-arrow-right" id = "slide-right" aria-hidden="true"></span>
+                      </button>!-->
+                    </div>
+                    <!--<div id="tables" class="horizontal">!-->
+                      <!--<div class='trow'>!-->
+                      <div id="mention-div" class="container-fluid mention ">
+                      <table class="table" frame="void" id="mention-table">
+                        <col width="418">
+                        <col width="100">
+                        <thead><tr class="head"><th style="width:20%" colspan="2">Most Mentioned User</th></tr></thead>
+                        <tbody id="body1">
+                        </tbody>
+                      </table> 
+                      </div>
+                      <div id="rtuser-div" class="container-fluid rtuser ">
+                      <table class="table" frame="void" id="rtuser-table">
+                        <col width="418">
+                        <col width="100">
+                        <thead><tr class="head"><th style="width:20%" colspan="2">Most Retweeted Users by Journalists</th></tr></thead>
+                        <tbody id="body3">
+                        </tbody>
+                       </table> 
+                      </div>
+                      <div id="hashtag-div" class="container-fluid  hashtag ">
+                      <table class="table" frame="void" id="hashtag-table">
+                        <col width="418">
+                        <col width="100">
+                        <thead><tr class="head"><th style="width:20%" colspan="2">Frequent Hashtag</th></tr></thead>
+                        <tbody id="body2">
+                        </tbody>
+                       </table> 
+                      </div>
+                    <!--</div>!-->
+                  <!--</div>!-->
+              </div>
             </div>
         </div>
-    </div>
-
+  </div>
     <script type='text/javascript' src="{{ url_for('static', filename='js/stream_flow.js')}}"></script>
+    <script>var stream_url = "{{url_for('get_stream_data')}}";
+    var userinfo_url = "{{url_for('get_user_info')}}";</script>
     <script>window.twttr = (function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0],
-        t = window.twttr || {};
-      if (d.getElementById(id)) return;
-      js = d.createElement(s);
-      js.id = id;
-      js.src = "https://platform.twitter.com/widgets.js";
-      fjs.parentNode.insertBefore(js, fjs);
-     
-      t._e = [];
-      t.ready = function(f) {
-        t._e.push(f);
-      };
-     
-      return t;
-    }(document, "script", "twitter-wjs"));</script>
-    <script>var stream_url = "{{url_for('get_stream_data')}}";</script>
+  var js, fjs = d.getElementsByTagName(s)[0],
+    t = window.twttr || {};
+  if (d.getElementById(id)) return t;
+  js = d.createElement(s);
+  js.id = id;
+  js.src = "https://platform.twitter.com/widgets.js";
+  fjs.parentNode.insertBefore(js, fjs);
+ 
+  t._e = [];
+  t.ready = function(f) {
+    t._e.push(f);
+  };
+ 
+  return t;
+}(document, "script", "twitter-wjs"));</script>
 </body>
 </html>

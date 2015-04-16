@@ -1,0 +1,190 @@
+<html lang='en'>
+<head>
+    <meta content='text/html; charset=utf-8' http-equiv='Content-Type'>
+
+    <title> JMAP-Twitter Summary</title>
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic' rel='stylesheet' type='text/css'>
+    <link href='https://netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.css' rel='stylesheet' type='text/css'>
+    <link href='https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css' rel='stylesheet' type='text/css'>
+
+    <link href="{{ url_for('static', filename='dist/metricsgraphics.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-theme.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap.css')}}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/metricsgraphics-demo.css')}}" rel="stylesheet" id='light'>
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.0/d3.min.js' charset='utf-8'></script>
+
+    <script type='text/javascript' src="{{ url_for('static', filename='dist/metricsgraphics.js')}}"></script>
+
+</head>
+<style>
+body{
+    overflow:auto;
+}
+table{
+ font-size: 0.8rem;
+}
+thead td {
+  cursor: s-resize;
+}
+
+.brush .extent {
+  stroke: #000;
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+.grid-background{
+    fill:#f2efe4;
+}
+
+.axis text {
+  font: 11px sans-serif;
+}
+
+.axis path {
+  display: none;
+}
+
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.grid line,
+.grid path {
+  fill: none;
+  stroke: #fff;
+  shape-rendering: crispEdges;
+}
+
+.grid .minor.tick line {
+  stroke-opacity: .5;
+}
+
+span.switchPage{
+  position:absolute;
+  left:100px;
+  top:400px;
+}
+
+div.col{
+    left:100px;
+}
+div.aspect1-controls{
+    padding-right: 10px;
+    padding-left: 300px;
+}
+div.label-controls{
+    padding-right: 10px;
+    padding-left: 100px;
+}
+div.aspect2-controls{
+    padding-right: 10px;
+    padding-left: 300px;
+}
+
+div.container{
+
+    width:1600px;
+}
+text{
+    font-size:14 !important;
+    font-weight:bold !important;
+}
+.mg-x-axis text{
+    font-size:14 !important;
+    width:100px !important;
+}
+div#trunk{
+    margin-top: 500px;
+}
+h2.mg-chart-title{
+    font-size:32 !important;
+}
+</style>
+<body>
+    <div class='container'>
+        <div class='head'>
+        </div>
+
+        <div id='trunk'>
+            <!--<span class="switchPage"><a href="{{url_for('timeline')}}"><i id="turnpage-img-i" class="fa fa-caret-left fa-5x" style="float:left;padding-left:100px;padding-top:15px;"></i></a></span>!-->
+            <div class='row trunk-section'>
+                <div class='col-lg-12'>
+                    <div class='row' id = 'main-diagram'>
+                        <div class='col-lg-12 text-center'>
+                            <div style='width:100%;' id='aspect1'></div>
+                            <div style='width:100%' id='aspect1-slider'></div>
+                        </div>
+                    </div> 
+                    <div class = 'row'>
+                        <div class='col-md-3'></div>
+                        <div class='col-md-7 legend' style="padding-left:100px;"></div>
+                    </div>
+                    <div class = 'row'>
+                        <div class='col-md-11 btn-group btn-group-sm text-center aspect1-controls'>
+                            <button type='button' class='btn btn-default active'
+                                data-y_accessor='tweet_num'># of Tweets</button>
+                            <button type='button' class='btn btn-default'
+                                data-y_accessor='tweep_num'># of Unique Users</button>
+                            <button type='button' class='btn btn-default'
+                                data-y_accessor='url_num'># of URLs</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='at_num'># of Tweets Using @</button> 
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='attweep_num'># of Reply Threads</button> 
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='rt_num'># of Retweeted Tweets</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='rttweep_num'># of Unique RT Reference</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='hash_num'># of Hashtags</button>
+                        </div>
+                    </div>  
+        
+                </div>
+            </div>
+            <div class='row trunk-section'>
+                <div class='col-lg-12'>
+                    <div class='row' id = 'main-diagram'>
+                        <div class='col-lg-12 text-center'>
+                            <div style='width:100%;' id='aspect2'></div>
+                            <div style='width:100%' id='aspect2-slider'></div>
+                        </div>
+                    </div> 
+                    <div class = 'row' style="height:32px;">
+                        <div class='col-md-3'></div>
+                        <div class='col-md-7 legend2' style="padding-left:100px;margin-bottom:0px;"></div>
+                    </div>
+                    <div class = 'row'>
+                        <div class='col-md-11 btn-group btn-group-sm text-center aspect2-controls'>
+                            <button type='button' class='btn btn-default active'
+                                data-y_accessor='tweet_num'># of Tweets</button>
+                            <button type='button' class='btn btn-default'
+                                data-y_accessor='tweep_num'># of Unique Users</button>
+                            <button type='button' class='btn btn-default'
+                                data-y_accessor='url_num'># of URLs</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='at_num'># of Tweets Using @</button> 
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='attweep_num'># of Reply Threads</button> 
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='rt_num'># of Retweeted Tweets</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='rttweep_num'># of Unique RT Reference</button>
+                            <button type='button' class='btn btn-default'
+                                    data-y_accessor='hash_num'># of Hashtags</button>
+                        </div>
+                    </div>  
+        
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type='text/javascript' src="{{ url_for('static', filename='js/summary_stat.js')}}"></script>
+</body>
+</html>
